@@ -1,0 +1,2068 @@
+---
+swagger: "2.0"
+info:
+  version: v1
+  title: Genius Integration Services API
+host: eugen-dev.r02.xlgs.local
+basePath: /XLCapital.XLI.GISiStage2/Gapi
+schemes:
+- https
+paths:
+  /api/GetPoliciesByFilter:
+    post:
+      tags:
+      - DigitalPolicy
+      summary: Get Policy Details when searching based on the Filter criteria
+      description: "If you enter policy search details like Policy Reference, inception date expiry date,etc all the details related to the entered search criteria will be displayed."
+      operationId: DigitalPolicy_Post
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: pageNumber
+        in: query
+        description: ""
+        required: true
+        type: string
+      - name: pageSize
+        in: query
+        description: ""
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details the fields to create a new policy event.
+        required: true
+        schema:
+          $ref: '#/definitions/PolicyServiceFilterRequest'
+      - name: ProductId
+        in: header
+        description: "Provide Product Id (Ex: NI01,DC01,GS01)"
+        required: true
+        type: string
+      - name: GlobalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      - name: SourceSystem
+        in: header
+        description: Provide Source System Name
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PolicyServiceFilterResponse'
+  /api/GetPolicyByReference:
+    get:
+      tags:
+      - DigitalPolicy
+      summary: Get Policy Details when searching only by PolicyReference.
+      description: "When you enter the policy reference, all the details related to the entered policy reference will be displayed."
+      operationId: DigitalPolicy_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyReference
+        in: query
+        description: The policy reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      - name: ProductId
+        in: header
+        description: "Provide Product Id (Ex: NI01,DC01,GS01)"
+        required: true
+        type: string
+      - name: GlobalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      - name: SourceSystem
+        in: header
+        description: Provide Source System Name
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PolicyServiceResponseExt'
+  /api/ConnectQuotesList:
+    post:
+      tags:
+      - Generic
+      summary: Get a List of all the New/Renewal Quote numbers in Genius incepting within the supplied date range.
+      description: "If you enter inception start date, company code and line of business, then a list of New/Renewal Quote numbers with related info will be retrieved based on the provided search criteria."
+      operationId: Generic_Post
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - in: body
+        name: request
+        description: The data in json format details the fields for Get Quotes List Request.
+        required: true
+        schema:
+          $ref: '#/definitions/ConnectQuotesListRequest'
+      - name: ProductId
+        in: header
+        description: "Provide Product Id (Ex: NI01,DC01,GS01)"
+        required: true
+        type: string
+      - name: GlobalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      - name: SourceSystem
+        in: header
+        description: Provide Source System Name
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ConnectQuotesListResponse'
+  /api/policies/{policyreferencenumber}/policyevents:
+    post:
+      tags:
+      - Policy
+      summary: Add Policy Event entries to a Local Policy
+      description: "If you enter policy reference number along with policy event code, event narrative and event effective date, then event gets added to the policy."
+      operationId: Policy_Post
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. AT00015102PR18A
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details the fields to create a new policy event.
+        required: true
+        schema:
+          $ref: '#/definitions/AddPolicyEventRequest'
+      - name: globalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/AddPolicyEventResponse'
+  /api/policies/{policyreferencenumber}/premiumstatus:
+    get:
+      tags:
+      - Policy
+      summary: Get the summary Premium Collection Status of each Local Policy within a Program.
+      description: "If you enter the Master Policy Reference, then Premium Collection Status of each Local Policy will be returned.\r\nIf you enter the Local Policy Reference, then Premium Collection Status of that Local Policy will be returned."
+      operationId: Policy_GetPremiumStatus
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. US00085409PR18A
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          examples:
+            application/json:
+              $type: "Gis.Core.Api.Model.NI.GetProgramPremiumStatusResponse, Gis.Core.Api"
+              PolicyPremiumStatuses:
+              - LocalPolicyReference: US00085409PR18A
+                PremiumStatus: Full
+              MasterUnderwritingYear: 0
+              MasterPolicyReference: US00085409PR18A
+              RequestUser: UserID
+              GeniusTransactionId: "0"
+              Messages: []
+              StatusMessages: []
+              ProcessStatus: Success
+          schema:
+            $ref: '#/definitions/GetProgramPremiumStatusResponse'
+  /api/policies/{policyreferencenumber}/ri:
+    get:
+      tags:
+      - Policy
+      summary: Get a list of RI Attachments when searching by Policy.
+      description: "When you enter the Policy the request will expect policy reference and will bring back the RI attachments for the policy reference.\r\nThe other fields are not in use for this version."
+      operationId: PolicyRI_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. US00085409PR18A
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetRIResponse'
+    put:
+      tags:
+      - Policy
+      summary: Add RI Attachments details to a Local Policy
+      description: "If you enter policy reference number along with RI attachment details, then RI details gets added to the policy."
+      operationId: PolicyRI_Put
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. US00085409PR18A
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details the fields to create a new RI details.
+        required: true
+        schema:
+          $ref: '#/definitions/RIProcessingRequest'
+      - name: globalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/IGenericCommonResponse'
+  /api/policies/{policyreferencenumber}/terms:
+    put:
+      tags:
+      - Policy
+      summary: Update Policy terms field of a PolicyReference.
+      description: "If you provide policy reference number along with payment condition value,then it will be updated to the policy terms fields."
+      operationId: PolicyTerms_Put
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. US00085409PR18A
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details for updating policy terms fields.
+        required: true
+        schema:
+          $ref: '#/definitions/PolicyTermsRequest'
+      - name: globalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/IGenericCommonResponse'
+  /api/policies/{policyreferencenumber}/transactions:
+    get:
+      tags:
+      - Policy
+      summary: Get Policy transactions when searching by PolicyReference and type.
+      operationId: PolicyTransactions_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: policyreferencenumber
+        in: path
+        description: The policy reference number e.g. DE00028392LI20A
+        required: true
+        type: string
+      - name: type
+        in: query
+        description: Payment amount type
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        description: Provide Bearer Token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PolicyTransactionsResponse'
+  /api/programs:
+    get:
+      tags:
+      - Programs
+      summary: Get a list of policies when searching by Program or Policy.
+      description: "If you enter Program the request will expect master underwriting year and program reference number.\r\nIf you enter Policy the request will expect master policy reference number."
+      operationId: Programs_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: programsearchmethod
+        in: query
+        description: Enter either Program or Policy.
+        required: true
+        type: string
+      - name: masterpolicyreferencenumber
+        in: query
+        description: Enter either Policy reference number or Quote reference number.(e.g.US00085409PR18A or QUS0049669PR18A)
+        required: false
+        type: string
+      - name: masterunderwritingyear
+        in: query
+        description: The year e.g. 2018
+        required: false
+        type: integer
+        format: int32
+      - name: programreferencenumber
+        in: query
+        description: The program e.g. 1199842
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/FindProgramResponse'
+  /api/programs/{masterpolicyreferencenumber}:
+    get:
+      tags:
+      - Programs
+      summary: Get Master and Local policies information.
+      description: "If you enter master policy reference number, then Master and Local policies information will be retrieved."
+      operationId: Programs_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: masterpolicyreferencenumber
+        in: path
+        description: The master policy reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GetProgramResponse'
+  /api/risks/{riskreferencenumber}:
+    get:
+      tags:
+      - Risks
+      summary: Get Risk Details when searching only by RiskReference.
+      operationId: Risk_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The risk reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        description: Provide Bearer Token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RiskResponse'
+  /api/risks/{riskreferencenumber}/coverages:
+    get:
+      tags:
+      - Risks
+      summary: Get Coverage Details when searching only by RiskReference.
+      operationId: RiskCoverages_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The risk reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        description: Provide Bearer Token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RiskCoveragesResponse'
+  /api/risks/{riskreferencenumber}/name:
+    put:
+      tags:
+      - Risks
+      summary: Add Name Involvement to the risk
+      description: "If you enter risk reference number along with name name and name usage, then name gets added to the risk."
+      operationId: RiskNameInvolvements_Put
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The risk reference number e.g. AT00000292LI22A or QAT0001665LI22A
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details the fields to add name to the risk.
+        required: true
+        schema:
+          $ref: '#/definitions/NameInvolvementRequest'
+      - name: globalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/IGenericCommonResponse'
+  /api/risks/{riskreferencenumber}/names:
+    get:
+      tags:
+      - Risks
+      summary: Get Risk Details when searching only by RiskReference.
+      operationId: RiskNameInvolvements_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The risk reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        description: Provide Bearer Token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RiskNamesResponse'
+  /api/risks/{riskreferencenumber}/participations:
+    get:
+      tags:
+      - Risks
+      summary: Get Risk Participations Details when searching only by RiskReference.
+      operationId: RiskParticipations_Get
+      consumes: []
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The risk reference number e.g. SE00000847LI17A
+        required: true
+        type: string
+      - name: Authorization
+        in: header
+        description: Provide Bearer Token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RiskParticipationsResponse'
+  /api/risks/{riskreferencenumber}/status:
+    put:
+      tags:
+      - Risks
+      summary: Update the Genius Policy Master Status Code on a Local Policy
+      description: "If you enter policy reference number along with policy master status code and policy narrative, then policy status gets updated."
+      operationId: RisksStatus_Put
+      consumes:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      - application/x-www-form-urlencoded
+      produces:
+      - application/json
+      - text/json
+      - application/xml
+      - text/xml
+      parameters:
+      - name: riskreferencenumber
+        in: path
+        description: The policy reference number e.g. AT00015092PR18A
+        required: true
+        type: string
+      - in: body
+        name: request
+        description: The data in json format details the fields required to update the policy status.
+        required: true
+        schema:
+          $ref: '#/definitions/UpdatePolicyStatusRequest'
+      - name: globalTrackingId
+        in: header
+        description: Provide Global Tracking Id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdatePolicyStatusResponse'
+definitions:
+  PolicyServiceFilterRequest:
+    type: object
+    properties:
+      PolicyReference:
+        type: array
+        items:
+          type: string
+      InceptionDate:
+        type: array
+        items:
+          type: string
+      ExpiryDate:
+        type: array
+        items:
+          type: string
+      UnderwritingYear:
+        type: array
+        items:
+          type: string
+      LineOfBusiness:
+        type: array
+        items:
+          type: string
+      BrokerId:
+        type: array
+        items:
+          type: string
+      InsuredId:
+        type: array
+        items:
+          type: string
+      CompanyId:
+        type: array
+        items:
+          type: string
+      BranchId:
+        type: array
+        items:
+          type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      PolicyReference:
+      - ""
+      - ""
+      InceptionDate:
+      - '>='
+      - "20190601"
+      ExpiryDate:
+      - <=
+      - "20190830"
+      UnderwritingYear:
+      - '>'
+      - "2019"
+      LineOfBusiness:
+      - PROP
+      BrokerId:
+      - ACMI0009
+      InsuredId:
+      - AAAF0003
+      CompanyId:
+      - "41"
+      BranchId:
+      - E2
+  PolicyServiceFilterResponse:
+    type: object
+    properties:
+      PolicyDetails:
+        type: array
+        items:
+          $ref: '#/definitions/Policy'
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  Policy:
+    type: object
+    properties:
+      MasterNumber:
+        type: string
+      MasterSequence:
+        type: string
+      MasterReference:
+        type: string
+      MasterProductCode:
+        type: string
+      MasterProductSequence:
+        type: string
+      MasterProductName:
+        type: string
+      MasterEndorsementNumber:
+        type: string
+      CountryOfOrigin:
+        type: string
+      InceptionDate:
+        type: string
+        format: date-time
+      ExpiryDate:
+        type: string
+        format: date-time
+      UnderwritingYear:
+        type: integer
+        format: int32
+      InsuredNameCode:
+        type: string
+      BrokerNameCode:
+        type: string
+      MasterTitle:
+        type: string
+      MasterClass1Code:
+        type: string
+      CompanyNameCode:
+        type: string
+      MainAccountCurrencyCode:
+        type: string
+      AmountsCurrencyCode:
+        type: string
+      MasterStatusCode:
+        type: string
+      NewRenewalFlag:
+        type: string
+      InwardOutwardFlag:
+        type: string
+      MasterInternalStatus2:
+        type: string
+        enum:
+        - Unknown
+        - Current
+        - Renewed
+        - CancelledMidTerm
+        - Lapsed
+        - NotTakenUp
+        - TakenUp
+      AuthorizedFlag:
+        type: string
+        enum:
+        - Authorized
+        - UnAuthorized
+      SkeletonRiskFlag:
+        type: string
+        enum:
+        - Skeleton
+        - NotSkeleton
+      BranchNameCode:
+        type: string
+  StatusMessage:
+    type: object
+    properties:
+      MessageType:
+        type: string
+        enum:
+        - Error
+        - Warning
+        - Information
+      MessageCode:
+        type: string
+      MessageDescription:
+        type: string
+      MessageDetail:
+        type: string
+  PolicyServiceResponseExt:
+    type: object
+    properties:
+      PolicyDetails:
+        type: array
+        items:
+          $ref: '#/definitions/PolicyByRef'
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  PolicyByRef:
+    type: object
+    properties:
+      MasterNumber:
+        type: string
+      MasterSequence:
+        type: string
+      MasterReference:
+        type: string
+      MasterProductCode:
+        type: string
+      MasterProductSequence:
+        type: string
+      MasterProductName:
+        type: string
+      MasterEndorsementNumber:
+        type: string
+      CountryOfOrigin:
+        type: string
+      InceptionDate:
+        type: string
+        format: date-time
+      ExpiryDate:
+        type: string
+        format: date-time
+      UnderwritingYear:
+        type: integer
+        format: int32
+      InsuredNameCode:
+        type: string
+      BrokerNameCode:
+        type: string
+      MasterTitle:
+        type: string
+      MasterClass1Code:
+        type: string
+      CompanyNameCode:
+        type: string
+      MainAccountCurrencyCode:
+        type: string
+      AmountsCurrencyCode:
+        type: string
+      MasterStatusCode:
+        type: string
+      NewRenewalFlag:
+        type: string
+      InwardOutwardFlag:
+        type: string
+      MasterInternalStatus2:
+        type: string
+        enum:
+        - Unknown
+        - Current
+        - Renewed
+        - CancelledMidTerm
+        - Lapsed
+        - NotTakenUp
+        - TakenUp
+      AuthorizedFlag:
+        type: string
+        enum:
+        - Authorized
+        - UnAuthorized
+      SkeletonRiskFlag:
+        type: string
+        enum:
+        - Skeleton
+        - NotSkeleton
+      BranchNameCode:
+        type: string
+      TaxCode:
+        type: string
+      Underwriter:
+        $ref: '#/definitions/NameUsageDetail'
+      OriginalInsured:
+        $ref: '#/definitions/NameDetail'
+      Broker:
+        $ref: '#/definitions/NameDetail'
+      AdditionalInsured:
+        $ref: '#/definitions/AddtionalNameDetail'
+      TypeofContractCode:
+        type: string
+      TypeofContractDescription:
+        type: string
+      IncProdDirRI:
+        type: string
+      IncProdDirRIDescription:
+        type: string
+      Sections:
+        type: array
+        items:
+          $ref: '#/definitions/Section'
+      TerritorialScope:
+        type: string
+      TerritorialScopeDescription:
+        type: string
+  NameUsageDetail:
+    type: object
+    properties:
+      PersonOrCompany:
+        type: string
+      NameCode:
+        type: string
+      FirstName:
+        type: string
+      LastName:
+        type: string
+      ListName:
+        type: string
+      LegalName:
+        type: string
+      NameUsageCode:
+        type: string
+      NameUsageCodeDescription:
+        type: string
+  NameDetail:
+    type: object
+    properties:
+      Name:
+        type: string
+  AddtionalNameDetail:
+    type: object
+    properties:
+      Name:
+        type: array
+        items:
+          type: string
+  Section:
+    type: object
+    properties:
+      Sequence:
+        type: string
+      TypeCode:
+        type: string
+      TypeDescription:
+        type: string
+      SubSectionTypeCode:
+        type: string
+      SectionDetails:
+        type: array
+        items:
+          $ref: '#/definitions/SectionDetail'
+  SectionDetail:
+    type: object
+    properties:
+      Sequence:
+        type: string
+      Title:
+        type: string
+      StartDate:
+        type: string
+        format: date-time
+      EndDate:
+        type: string
+        format: date-time
+      Class1Code:
+        type: string
+      Class1CodeDescription:
+        type: string
+      Class2Code:
+        type: string
+      Class2CodeDescription:
+        type: string
+      Class4Code:
+        type: string
+      Class4CodeDescription:
+        type: string
+      Trade1Code:
+        type: string
+      Trade1CodeDescription:
+        type: string
+      Trade2Code:
+        type: string
+      Date1:
+        type: string
+        format: date-time
+      Coverages:
+        type: array
+        items:
+          $ref: '#/definitions/Coverage'
+  Coverage:
+    type: object
+    properties:
+      Sequence:
+        type: string
+      Title:
+        type: string
+      TypeCode:
+        type: string
+      TypeDescription:
+        type: string
+      AttachedDeductionGroupSequence:
+        type: string
+      StartDate:
+        type: string
+        format: date-time
+      EndDate:
+        type: string
+        format: date-time
+      OriginalCurrency:
+        type: string
+      OriginalCurrencyDescription:
+        type: string
+      LimitAmount:
+        type: number
+        format: double
+      Deductible1Currency:
+        type: string
+      Deductible1CurrencyDescription:
+        type: string
+      Deductible1Amount:
+        type: number
+        format: double
+      Deductible2Currency:
+        type: string
+      Deductible2CurrencyDescription:
+        type: string
+      Deductible2Amount:
+        type: number
+        format: double
+      Deductible2Qualifier:
+        type: string
+      AccountingCurrency:
+        type: string
+      AccountingCurrencyDescription:
+        type: string
+      PremiumRate:
+        type: number
+        format: double
+      Premium:
+        type: number
+        format: double
+      ExchangeRate:
+        type: number
+        format: double
+      AnnualisedPremium:
+        type: number
+        format: double
+      BasedOnAmount:
+        type: number
+        format: double
+      BookedCommission:
+        type: number
+        format: double
+      BookedPremium:
+        type: number
+        format: double
+      PaymentStatus:
+        type: string
+      MaintenanceStatus:
+        type: string
+        enum:
+        - Blank
+        - Current
+        - Previous
+        - Cancelled
+        - PotentiallyDeleted
+      Aggregation:
+        type: string
+  ConnectQuotesListRequest:
+    type: object
+    properties:
+      IsMonthlyBatch:
+        type: boolean
+      InceptionStartDate:
+        type: string
+      CompanyCode:
+        type: array
+        items:
+          type: string
+      ProductCode:
+        type: array
+        items:
+          type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      IsMonthlyBatch: false
+      InceptionStartDate: "20210101"
+      CompanyCode:
+      - D7
+      - B1
+      ProductCode:
+      - QLIABM
+      - QEPLIE
+  ConnectQuotesListResponse:
+    type: object
+    properties:
+      InceptionStartDate:
+        type: string
+      InceptionEndDate:
+        type: string
+      QuoteDetails:
+        type: array
+        items:
+          $ref: '#/definitions/ConnectQuoteDetail'
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  ConnectQuoteDetail:
+    type: object
+    properties:
+      UnderwriterNameCode:
+        type: string
+      UnderwriterListName:
+        type: string
+      PAMNameCode:
+        type: string
+      PAMListName:
+        type: string
+      DAMNameCode:
+        type: string
+      DAMListName:
+        type: string
+      CompanyCode:
+        type: string
+      BranchCode:
+        type: string
+      ProductCode:
+        type: string
+      QuoteReference:
+        type: string
+      ProgramReference:
+        type: string
+      UnderwritingYear:
+        type: integer
+        format: int32
+      QuoteStatusCode:
+        type: string
+      MainLineCode:
+        type: string
+      ProducingOffice:
+        type: string
+      InceptionDate:
+        type: string
+        format: date-time
+      ExpiryDate:
+        type: string
+        format: date-time
+      InsuredNameCode:
+        type: string
+      InsuredListName:
+        type: string
+      CountryOfSettlementCode:
+        type: string
+      NewRenewalFlag:
+        type: string
+      QuoteTitle:
+        type: string
+  AddPolicyEventRequest:
+    type: object
+    properties:
+      PolicyReference:
+        type: string
+      EventCode:
+        type: string
+      EventNarrative:
+        type: string
+      EventDate:
+        type: string
+        format: date-time
+      RequestUser:
+        type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      PolicyReference: AT00015102PR18A
+      EventCode: BDS
+      EventNarrative: Adding Event Narrative
+      EventDate: 2023-07-11T15:39:10.6745766+01:00
+      RequestUser: UserID
+  AddPolicyEventResponse:
+    type: object
+    properties:
+      PolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  GetProgramPremiumStatusResponse:
+    type: object
+    properties:
+      LocalPolicyReference:
+        type: string
+      PolicyPremiumStatuses:
+        type: array
+        items:
+          $ref: '#/definitions/PolicyPremiumStatusData'
+      ProgramReferenceNumber:
+        type: string
+      MasterUnderwritingYear:
+        type: integer
+        format: int32
+      MasterPolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  PolicyPremiumStatusData:
+    type: object
+    properties:
+      LocalPolicyReference:
+        type: string
+      PremiumStatus:
+        type: string
+        enum:
+        - Unbooked
+        - Unpaid
+        - Partial
+        - Full
+  GetRIResponse:
+    type: object
+    properties:
+      PolicyReference:
+        type: string
+      RIAttachments:
+        type: array
+        items:
+          $ref: '#/definitions/RIAttachmentData'
+      ProgramReferenceNumber:
+        type: string
+      MasterUnderwritingYear:
+        type: integer
+        format: int32
+      MasterPolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  RIAttachmentData:
+    type: object
+    properties:
+      Sequence:
+        type: integer
+        format: int32
+      NetOfSequence:
+        type: integer
+        format: int32
+      PolicyReference:
+        type: string
+      PolicyTitle:
+        type: string
+      ReinsurerGNSNameCode:
+        type: string
+      ReinsurerName:
+        type: string
+      CessionPercentage:
+        type: number
+        format: double
+      CessionFlatAmount:
+        type: number
+        format: double
+      TypeCode:
+        type: string
+      TypeDescription:
+        type: string
+      FacTypeCode:
+        type: string
+      FacTypeDescription:
+        type: string
+  RIProcessingRequest:
+    type: object
+    properties:
+      riDetails:
+        type: array
+        items:
+          $ref: '#/definitions/RIAttachmentUpdateData'
+      requestUser:
+        type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      riDetails:
+      - calculationSequence: 40
+        riPolicyNumber: 958846 031
+        netOfSequence: 0
+        cessionPercentage: 5
+        cessionFlatAmount: 0
+        totalRICommission: ""
+      requestUser: UserID
+  RIAttachmentUpdateData:
+    type: object
+    properties:
+      calculationSequence:
+        type: integer
+        format: int32
+      riPolicyNumber:
+        type: string
+      netOfSequence:
+        type: integer
+        format: int32
+      cessionPercentage:
+        type: number
+        format: double
+      cessionFlatAmount:
+        type: number
+        format: double
+      totalRICommission:
+        type: string
+  IGenericCommonResponse:
+    type: object
+  PolicyTermsRequest:
+    type: object
+    properties:
+      PaymentCondition:
+        type: string
+      requestUser:
+        type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      PaymentCondition: P
+  PolicyTransactionsResponse:
+    type: object
+    properties:
+      PolicyTransactions:
+        type: array
+        items:
+          $ref: '#/definitions/PolicyTransactionsData'
+  PolicyTransactionsData:
+    type: object
+    properties:
+      endorsementNo:
+        type: string
+      section:
+        type: string
+      subSection:
+        type: string
+      sectionDetail:
+        type: string
+      transactionType:
+        type: string
+      installmentNo:
+        type: string
+      amountCode:
+        type: string
+      originalCurrency:
+        type: string
+      amountOriginal:
+        type: number
+        format: double
+      paymentStatus:
+        type: string
+      installmentDueDate:
+        type: string
+      reportingPeriod:
+        type: string
+  FindProgramResponse:
+    type: object
+    properties:
+      ProgramsData:
+        type: array
+        items:
+          $ref: '#/definitions/ProgramData'
+      ProgramReferenceNumber:
+        type: string
+      MasterUnderwritingYear:
+        type: integer
+        format: int32
+      MasterPolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  ProgramData:
+    type: object
+    properties:
+      MasterPolicyReference:
+        type: string
+      MasterPolicyNumber:
+        type: string
+      MasterPolicySequence:
+        type: string
+      InceptionDate:
+        type: string
+      MasterOfficeCountry:
+        type: string
+      LineOfBusiness:
+        type: string
+      MasterNewRenewal:
+        type: string
+      ProgramAccountName:
+        type: string
+      MasterPolicyTitle:
+        type: string
+      PolicyType:
+        type: string
+      PolicyTypeName:
+        type: string
+      PolicyStatus:
+        type: string
+      PolicyStatusName:
+        type: string
+      InternalStatus:
+        type: string
+      InternalStatusName:
+        type: string
+      RelatedPolicyNumber:
+        type: string
+  GetProgramResponse:
+    type: object
+    properties:
+      MasterPolicyInfo:
+        $ref: '#/definitions/ProgramMasterPolicyData'
+      LocalPoliciesInfo:
+        type: array
+        items:
+          $ref: '#/definitions/ProgramLocalPolicyData'
+      ProgramReferenceNumber:
+        type: string
+      MasterUnderwritingYear:
+        type: integer
+        format: int32
+      MasterPolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+  ProgramMasterPolicyData:
+    type: object
+    properties:
+      MaximumExposureLimit:
+        $ref: '#/definitions/MaxExposureLimitData'
+      NameInvolvements:
+        type: array
+        items:
+          $ref: '#/definitions/NameInvolvementData'
+      MasterPolicyNumber:
+        type: string
+      MasterPolicySequence:
+        type: string
+      NewRenewal:
+        type: string
+      EndorsementNumber:
+        type: string
+      EndorsementStatus:
+        type: string
+      PolicyStatus:
+        type: string
+      InternalStatus:
+        type: string
+      PolicyProductCode:
+        type: string
+      CompanyCode:
+        type: string
+      BranchCode:
+        type: string
+      OfficeCountryCode:
+        type: string
+      CountryOfSettlementCode:
+        type: string
+      InsuredCountryCode:
+        type: string
+      MainLineCode:
+        type: string
+      ProgramAccountName:
+        type: string
+      Title:
+        type: string
+      InceptionDate:
+        type: string
+      InceptionTime:
+        type: integer
+        format: int32
+      ExpiryDate:
+        type: string
+      ExpiryTime:
+        type: integer
+        format: int32
+      RetroDate:
+        type: string
+      LTA:
+        type: string
+      LTAInceptionDate:
+        type: string
+      LTAExpiryDate:
+        type: string
+      Layer:
+        type: string
+      PortfolioProtection:
+        type: string
+      TypeOfContract:
+        type: string
+      ProducingOffice:
+        type: string
+      Tier1:
+        type: string
+      CentralSettlement:
+        type: string
+      CaptiveAccount:
+        type: string
+      TradeOfBusinessCode:
+        type: string
+      TradeOfBusinessDescription:
+        type: string
+      OriginalCurrency:
+        type: string
+      Insured:
+        $ref: '#/definitions/NameAddressData'
+      Broker:
+        $ref: '#/definitions/NameAddressData'
+      PolicyType:
+        type: string
+      PolicyTypeName:
+        type: string
+      PolicyStatusName:
+        type: string
+      InternalStausName:
+        type: string
+  ProgramLocalPolicyData:
+    type: object
+    properties:
+      NameInvolvements:
+        type: array
+        items:
+          $ref: '#/definitions/NameInvolvementData'
+      LocalPolicyReference:
+        type: string
+      LocalPolicyNumber:
+        type: string
+      LocalPolicySequence:
+        type: string
+      LocalUnderwritingYear:
+        type: integer
+        format: int32
+      RelatedLocalPolicy:
+        type: string
+      RelatedLocalPolicyReference:
+        type: string
+      RelatedLocalPolicyNumber:
+        type: string
+      RelatedLocalPolicySequence:
+        type: string
+      NewRenewal:
+        type: string
+      EndorsementNumber:
+        type: string
+      EndorsementStatus:
+        type: string
+      PolicyStatus:
+        type: string
+      InternalStatus:
+        type: string
+      PolicyProductCode:
+        type: string
+      CompanyCode:
+        type: string
+      BranchCode:
+        type: string
+      OfficeCountryCode:
+        type: string
+      CountryOfSettlementCode:
+        type: string
+      InsuredCountryCode:
+        type: string
+      Title:
+        type: string
+      InceptionDate:
+        type: string
+      InceptionTime:
+        type: integer
+        format: int32
+      ExpiryDate:
+        type: string
+      ExpiryTime:
+        type: integer
+        format: int32
+      RetroDate:
+        type: string
+      TypeOfContract:
+        type: string
+      ProducingOffice:
+        type: string
+      Insured:
+        $ref: '#/definitions/NameAddressData'
+      Broker:
+        $ref: '#/definitions/NameAddressData'
+      LeaderCedant:
+        $ref: '#/definitions/NameAddressData'
+      RIAttachments:
+        type: array
+        items:
+          $ref: '#/definitions/RIAttachmentData'
+      PolicyType:
+        type: string
+      PolicyTypeName:
+        type: string
+      PolicyStatusName:
+        type: string
+      InternalStausName:
+        type: string
+  MaxExposureLimitData:
+    type: object
+    properties:
+      TypeCode:
+        type: string
+      TypeDescription:
+        type: string
+      LimitAmount:
+        type: number
+        format: double
+      OriginalCurrency:
+        type: string
+  NameInvolvementData:
+    type: object
+    properties:
+      InvolvementType:
+        type: string
+      InvolvementTypeCode:
+        type: string
+      InvolvementTypeDescription:
+        type: string
+      NameType:
+        type: string
+      NameCode:
+        type: string
+      NetworkID:
+        type: string
+      FirstName:
+        type: string
+      LastName:
+        type: string
+      CompanyName:
+        type: string
+  NameAddressData:
+    type: object
+    properties:
+      LegalName:
+        type: string
+      GeniusNameCode:
+        type: string
+      XLNameID:
+        type: string
+      DUNSNumber:
+        type: string
+      AddressLine1:
+        type: string
+      AddressLine2:
+        type: string
+      AddressLine3:
+        type: string
+      AddressLine4:
+        type: string
+      AreaCode:
+        type: string
+  RiskResponse:
+    type: object
+    properties:
+      riskDetails:
+        $ref: '#/definitions/RiskMaster'
+      _links:
+        type: array
+        items:
+          $ref: '#/definitions/RedirectLinks'
+      total:
+        type: integer
+        format: int32
+  RiskMaster:
+    type: object
+    properties:
+      quoteReference:
+        type: string
+      policyReference:
+        type: string
+      programReferenceNumber:
+        type: string
+      riskTitle:
+        type: string
+      masterStatusCode:
+        type: string
+      inceptionDate:
+        type: string
+        format: date-time
+      underwritingYear:
+        type: integer
+        format: int32
+      expiryDate:
+        type: string
+        format: date-time
+      lineOfBusiness:
+        type: string
+      productCode:
+        type: string
+      programAccountName:
+        type: string
+      programAccountNumber:
+        type: string
+      underWritingLocation:
+        type: string
+      currencyOfAmounts:
+        type: string
+      currency:
+        type: string
+      premiumType:
+        type: string
+      grossPremium:
+        type: number
+        format: double
+      tax:
+        type: number
+        format: double
+      instalmentFrequency:
+        type: string
+      invoiceNumber:
+        type: string
+  RedirectLinks:
+    type: object
+    properties:
+      href:
+        type: string
+        readOnly: true
+      rel:
+        type: string
+        readOnly: true
+  RiskCoveragesResponse:
+    type: object
+    properties:
+      coverages:
+        type: array
+        items:
+          $ref: '#/definitions/RiskCoverages'
+      total:
+        type: integer
+        format: int32
+  RiskCoverages:
+    type: object
+    properties:
+      section:
+        type: string
+      subSection:
+        type: string
+      sectionDetail:
+        type: string
+      coverageCode:
+        type: string
+      coverageName:
+        type: string
+      countryName:
+        type: string
+      netPremium:
+        type: number
+        format: double
+      insuranceTaxPercentage:
+        type: number
+        format: double
+      insuranceTax:
+        type: number
+        format: double
+      grosspremium:
+        type: number
+        format: double
+      geniusKZTaxFlag:
+        type: string
+  NameInvolvementRequest:
+    type: object
+    properties:
+      nameCode:
+        type: string
+      nameType:
+        type: string
+      requestUser:
+        type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      nameCode: ABARKER
+      nameType: DAM
+      requestUser: UserID
+  RiskNamesResponse:
+    type: object
+    properties:
+      names:
+        type: array
+        items:
+          $ref: '#/definitions/RiskNames'
+      total:
+        type: integer
+        format: int32
+  RiskNames:
+    type: object
+    properties:
+      nameType:
+        type: string
+      nameUsage:
+        type: string
+      nameCode:
+        type: string
+      name:
+        type: string
+      dunsNumber:
+        type: string
+      xlNameID:
+        type: string
+      addressLine1:
+        type: string
+      addressLine2:
+        type: string
+      addressLine3:
+        type: string
+      addressLine4:
+        type: string
+      addressLine5:
+        type: string
+      areaCode:
+        type: string
+  RiskParticipationsResponse:
+    type: object
+    properties:
+      participations:
+        type: array
+        items:
+          $ref: '#/definitions/RiskParticipations'
+      total:
+        type: integer
+        format: int32
+  RiskParticipations:
+    type: object
+    properties:
+      participantNameCode:
+        type: string
+      participantName:
+        type: string
+      insuranceTaxNo:
+        type: string
+      portion:
+        type: number
+        format: double
+      netPremium:
+        type: number
+        format: double
+      insuranceTax:
+        type: number
+        format: double
+      grossPremium:
+        type: number
+        format: double
+  UpdatePolicyStatusRequest:
+    type: object
+    properties:
+      PolicyReference:
+        type: string
+      Status:
+        type: string
+      Narrative:
+        type: string
+      Reason:
+        type: string
+      RequestUser:
+        type: string
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
+    example:
+      PolicyReference: AT00015092PR18A
+      Status: NF
+      Narrative: Adding Policy Narrative
+      Reason: ""
+      RequestUser: UserID
+  UpdatePolicyStatusResponse:
+    type: object
+    properties:
+      PolicyReference:
+        type: string
+      RequestUser:
+        type: string
+      Reference:
+        type: string
+      GeniusTransactionId:
+        type: integer
+        format: int32
+      Messages:
+        type: array
+        items:
+          type: string
+      StatusMessages:
+        type: array
+        items:
+          $ref: '#/definitions/StatusMessage'
+      ProcessStatus:
+        type: integer
+        format: int32
+        enum:
+        - 0
+        - 1
+        - 2
+      GlobalTrackingId:
+        type: string
+      SourceSystem:
+        type: string
